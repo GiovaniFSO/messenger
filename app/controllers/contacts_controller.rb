@@ -8,14 +8,25 @@ class ContactsController < ApplicationController
   end
 
   def create
-    user = User.find(email: contact_params[:record][:email])
+    user = User.find_by(email: contact_params[:record][:email])
     @contact =current_user.contacts.build(record: user)
-    if contact.save
+    if @contact.save
       flash[:notice] = "Contact successfully create"
       redirect_to contacts_path
     else
       render :new
     end
+  end
+
+  def destroy
+    @contact = current_user.contacts.find(params[:id])
+    if @contact.destroy
+      flash[:notice] = "Contact successfully removed"
+    else
+      flash[:alert] = "An error ocurred when trying to remove this contact"
+    end
+
+    redirect_to contacts_path
   end
 
   private
